@@ -31,9 +31,15 @@ const menuItems = [
   },
 ];
 
-function Sidebar() {
+
+type SidebarProps = {
+  isOpen: boolean;
+};
+function Sidebar({ isOpen }: SidebarProps) {
   return (
-    <aside className=" w-full md:w-64 border-b md:border-b-0 md:border-r bg-white  min-h-screen md:shrink-0">
+    <aside
+  className={`${isOpen ? "block" : "hidden"} md:block w-full md:w-64 border-b md:border-b-0 md:border-r bg-white md:min-h-screen md:shrink-0`}
+>
       <nav className=" p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
