@@ -11,7 +11,7 @@ function Header({ onMenuClick }: HeaderProps) {
     <header className="bg-white min-h-16 px-4 flex items-center md:px-6 border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between w-full">
 
-        {/* بخش اول: منو و لوگو */}
+        {/* منو و لوگو */}
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuClick}
@@ -26,7 +26,7 @@ function Header({ onMenuClick }: HeaderProps) {
           </h1>
         </div>
 
-        {/* بخش دوم: جستجو */}
+        {/* جستجو */}
         <div className="hidden md:flex items-center w-full max-w-sm relative">
           <FiSearch className="absolute right-3 text-gray-400" />
 
@@ -37,16 +37,9 @@ function Header({ onMenuClick }: HeaderProps) {
           />
         </div>
 
-        {/* بخش سوم: ثبت‌نام، اعلان و پروفایل */}
+        {/* ثبت‌نام، اعلان و پروفایل */}
         <div className="flex items-center gap-3">
-
-          <Link
-            to="/register"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
-          >
-            ثبت‌نام
-          </Link>
-
+      
           <button
             className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
             aria-label="اعلان‌ها"
@@ -63,11 +56,14 @@ function Header({ onMenuClick }: HeaderProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-              <FiUser size={20} />
-            </div>
-          </div>
+          <Link
+            to="/login"
+            className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-200 transition"
+            aria-label="ورود به حساب کاربری"
+            title="ورود"
+          >
+            <FiUser size={20} />
+          </Link>
 
         </div>
       </div>
