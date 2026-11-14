@@ -1,5 +1,6 @@
 
 import { FiMenu, FiSearch, FiBell, FiUser } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -36,8 +37,15 @@ function Header({ onMenuClick }: HeaderProps) {
           />
         </div>
 
-        {/* بخش سوم: اعلان و پروفایل */}
+        {/* بخش سوم: ثبت‌نام، اعلان و پروفایل */}
         <div className="flex items-center gap-3">
+
+          <Link
+            to="/register"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+          >
+            ثبت‌نام
+          </Link>
 
           <button
             className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
@@ -46,24 +54,22 @@ function Header({ onMenuClick }: HeaderProps) {
             <FiBell size={20} />
           </button>
 
-            <div className="hidden sm:block">
-              <p className="text-xs text-gray-500">
-                خوش آمدید
-              </p>
-              <p className="text-sm font-semibold text-gray-800">
-                مدیر کاربان
-              </p>
-            </div>
-            
+          <div className="hidden sm:block">
+            <p className="text-xs text-gray-500">
+              خوش آمدید
+            </p>
+            <p className="text-sm font-semibold text-gray-800">
+              مدیر کاربان
+            </p>
+          </div>
+
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
               <FiUser size={20} />
             </div>
-
           </div>
 
         </div>
-
       </div>
     </header>
   );
