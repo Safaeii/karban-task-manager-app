@@ -10,6 +10,7 @@ import {
   getTasks,
   createTask,
   updateTaskStatus,
+  deleteTask,
 } from "../../api/tasksApi";
 
 import type {
@@ -122,6 +123,28 @@ function DashboardPage() {
       );
 
       setError("تغییر وضعیت وظیفه ذخیره نشد.");
+    }
+  }
+
+  // حذف وظیفه
+  async function handleDeleteTask(taskId: string) {
+    const confirmed = window.confirm(
+      "آیا از حذف این وظیفه مطمئن هستی؟"
+    );
+
+    if (!confirmed || !user) return;
+
+    try {
+      setError(null);
+
+      await deleteTask(taskId, user.id);
+
+      setTasks((prevTasks) =>
+        prevTasks.filter((task) => task.id !== taskId)
+      );
+    } catch (err) {
+      console.error("خطا در حذف وظیفه:", err);
+      setError("حذف وظیفه با مشکل مواجه شد.");
     }
   }
 
@@ -249,6 +272,7 @@ function DashboardPage() {
               <KanbanBoard
                 tasks={tasks}
                 onStatusChange={handleTaskStatusChange}
+                onDelete={handleDeleteTask}
               />
             )}
           </section>

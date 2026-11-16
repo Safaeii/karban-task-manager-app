@@ -70,3 +70,15 @@ export async function createTask(
   };
 }
 
+export async function deleteTask(
+  taskId: string,
+  userId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", taskId)
+    .eq("user_id", userId);
+
+  if (error) throw error;
+}

@@ -1,6 +1,6 @@
 
 import {
-  FiSearch,
+  FiMenu,
   FiUser,
   FiLogOut,
 } from "react-icons/fi";
@@ -9,7 +9,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../features/auth/hooks/useAuthContext";
 import { signOut } from "../../features/auth/api/authApi";
 
-function Header() {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+function Header({ onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
   const { user, profile } = useAuthContext();
 
@@ -27,109 +31,86 @@ function Header() {
   return (
     <header
       dir="rtl"
-      className="sticky top-0 z-30 w-full border-b border-[#E8EEF5] bg-white/95 px-3 backdrop-blur-lg sm:px-6"
+      className="sticky top-0 z-40 w-full border-b border-[#E8EEF5] bg-white"
     >
-      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-3">
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:px-5 lg:px-6">
 
-        {/* Right: Logo */}
-        <Link
-          to={user ? "/dashboard" : "/"}
-          className="flex shrink-0 items-center gap-1.5"
-        >
-        <img
-  src="../../../public/karban-logo.png.png"
-  alt="کاربان"
-  className="h-14 w-auto max-w-[100px] object-contain sm:h-16 sm:max-w-[120px] md:h-20 md:max-w-[150px]"
-/>
-        </Link>
+        {/* لوگو و منو */}
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+          {onMenuClick && (
+            <button
+              type="button"
+              onClick={onMenuClick}
+              aria-label="باز کردن منو"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[#26364A] hover:bg-[#EFF6FD] md:hidden"
+            >
+              <FiMenu size={24} />
+            </button>
+          )}
 
-        {/* Center: Navigation */}
-        <nav className="hidden flex-1 items-center justify-center gap-4 lg:flex xl:gap-7">
-          <a
-            href="#home"
-            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
-          >
+          <Link to="/" className="flex shrink-0 items-center">
+            <img
+              src="../../../public/karban-logo.png.png"
+              alt="لوگوی کاربان"
+              className="h-12 w-auto max-w-[130px] object-contain sm:h-16 sm:max-w-[180px] lg:h-20 lg:max-w-[220px]"
+            />
+          </Link>
+        </div>
+
+        {/* لینک‌های اصلی */}
+        <nav className="hidden items-center gap-5 text-sm font-medium text-[#52657B] lg:flex">
+          <Link to="/#home" className="transition hover:text-[#7DA9D8]">
             خانه
-          </a>
-
-          <a
-            href="#features"
-            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
-          >
+          </Link>
+          <Link to="/#features" className="transition hover:text-[#7DA9D8]">
             امکانات
-          </a>
-
-          <a
-            href="#about"
-            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
-          >
+          </Link>
+          <Link to="/#about" className="transition hover:text-[#7DA9D8]">
             درباره ما
-          </a>
+          </Link>
         </nav>
 
-        {/* Left: Search + User */}
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-
-          {/* Capsule Search */}
-          <div className="relative w-[105px] sm:w-[160px] md:w-[190px] xl:w-[220px]">
-            <FiSearch
-              size={17}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8AA9C9]"
-            />
-
-            <input
-              type="search"
-              placeholder="جستجو..."
-              aria-label="جستجو"
-              className="h-10 w-full rounded-full border border-[#E4EFFB] bg-[#EFF6FD] pr-9 pl-3 text-xs text-[#26364A] outline-none transition-all placeholder:text-[#9AADC2] focus:border-[#A9C9EA] focus:bg-white focus:shadow-[0_0_0_4px_rgba(125,169,216,0.10)] sm:text-sm"
-            />
-          </div>
-
-          {/* User Account */}
+        {/* حساب کاربری */}
+        <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
           {user ? (
-            <div className="group relative shrink-0">
+            <>
+              <div className="hidden min-w-0 items-center gap-2 sm:flex">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FD] text-[#7DA9D8]">
+                  <FiUser size={19} />
+                </div>
+
+                <span className="max-w-[110px] truncate text-xs font-semibold text-[#26364A] lg:max-w-[150px] lg:text-sm">
+                  {profile?.username ?? user.email}
+                </span>
+              </div>
+
+              <Link
+                to="/dashboard"
+                className="whitespace-nowrap rounded-xl bg-[#EFF6FD] px-2.5 py-2 text-[11px] font-semibold text-[#526F91] transition hover:bg-[#DCEBFA] sm:px-4 sm:text-sm"
+              >
+                پنل کاربری
+              </Link>
+
               <button
                 type="button"
-                aria-label="حساب کاربری"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E4EFFB] bg-[#EFF6FD] text-[#7DA9D8] transition hover:bg-[#DCEBFA]"
+                onClick={handleLogout}
+                aria-label="خروج"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl px-2.5 py-2 text-[11px] font-semibold text-rose-500 transition hover:bg-rose-50 sm:px-3 sm:text-sm"
               >
-           <FiUser size={20} />
+                <FiLogOut size={16} />
+                <span className="hidden sm:inline">خروج</span>
               </button>
-
-              <div className="invisible absolute left-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[#E8EEF5] bg-white p-3 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                <p className="truncate px-2 py-2 text-sm font-semibold text-[#26364A]">
-                  {profile?.username ?? user.email}
-                </p>
-
-                <Link
-                  to="/dashboard"
-                  className="block rounded-xl px-3 py-2 text-sm text-[#52657B] transition hover:bg-[#F1F7FE]"
-                >
-                  پنل کاربری
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-red-500 transition hover:bg-red-50"
-                >
-                  <FiLogOut size={16} />
-                  خروج
-                </button>
-              </div>
-            </div>
+            </>
           ) : (
             <Link
               to="/login"
-              aria-label="ورود و ثبت‌نام"
-              title="ورود و ثبت‌نام"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E4EFFB] bg-[#EFF6FD] text-[#7DA9D8] transition hover:bg-[#DCEBFA]"
+              className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#7DA9D8] px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-[#6796C9] sm:px-4 sm:text-sm"
             >
-              <FiUser size={20} />
+              <FiUser size={17} />
+              ورود
             </Link>
           )}
         </div>
-
       </div>
     </header>
   );

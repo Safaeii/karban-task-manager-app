@@ -3,10 +3,15 @@ import {
   DndContext,
   useDraggable,
   useDroppable,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
+import { FiTrash2 } from "react-icons/fi";
 
 import type { Task, TaskStatus } from "../../tasks/types/task";
 
@@ -18,7 +23,13 @@ const columns: { id: TaskStatus; title: string }[] = [
 ];
 
 // کارت قابل کشیدن
-function DraggableTaskCard({ task }: { task: Task }) {
+function DraggableTaskCard({
+  task,
+  onDelete,
+}: {
+  task: Task;
+  onDelete: (taskId: string) => void;
+}) {
   const {
     attributes,
     listeners,
@@ -40,11 +51,27 @@ function DraggableTaskCard({ task }: { task: Task }) {
       style={style}
       {...listeners}
       {...attributes}
-      className="cursor-grab rounded-xl border border-[#E8EEF5] bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing"
+      className="touch-none cursor-grab rounded-xl border border-[#E8EEF5] bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing"
     >
-      <h3 className="font-semibold text-[#26364A]">
-        {task.title}
-      </h3>
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="min-w-0 font-semibold text-[#26364A]">
+          {task.title}
+        </h3>
+
+        <button
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete(task.id);
+          }}
+          className="shrink-0 rounded-lg p-2 text-red-500 transition hover:bg-red-50"
+          aria-label="حذف وظیفه"
+          title="حذف وظیفه"
+        >
+          <FiTrash2 size={17} />
+        </button>
+      </div>
 
       <p className="mt-2 text-sm leading-6 text-[#8493A5]">
         {task.description || "بدون توضیحات"}
@@ -80,10 +107,12 @@ function DroppableColumn({
   id,
   title,
   tasks,
+  onDelete,
 }: {
   id: TaskStatus;
   title: string;
   tasks: Task[];
+  onDelete: (taskId: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -113,6 +142,7 @@ function DroppableColumn({
           <DraggableTaskCard
             key={task.id}
             task={task}
+            onDelete={onDelete}
           />
         ))}
 
@@ -128,19 +158,36 @@ function DroppableColumn({
   );
 }
 
-// برد اصلی کانبان
+// پراپرتی‌های برد کانبان
 interface KanbanBoardProps {
   tasks: Task[];
   onStatusChange: (
     taskId: string,
     status: TaskStatus
   ) => void;
+  onDelete: (taskId: string) => void;
 }
 
+// برد اصلی کانبان
 function KanbanBoard({
   tasks,
   onStatusChange,
+  onDelete,
 }: KanbanBoardProps) {
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 8,
+      },
+    })
+  );
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
@@ -159,7 +206,10 @@ function KanbanBoard({
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      onDragEnd={handleDragEnd}
+    >
       <div
         dir="rtl"
         className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-3 lg:gap-5"
@@ -172,6 +222,7 @@ function KanbanBoard({
             tasks={tasks.filter(
               (task) => task.status === column.id
             )}
+            onDelete={onDelete}
           />
         ))}
       </div>
