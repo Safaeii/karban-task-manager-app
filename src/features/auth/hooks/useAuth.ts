@@ -1,30 +1,67 @@
+
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { Profile } from "../types/types";
 import { supabase } from "../../../shared/services/supabase";
 
 function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // دریافت وضعیت ورود فعلی
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    async function getProfile(userId: string) {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
-    // گوش دادن به تغییرات ورود و خروج
+      if (error) {
+        console.error("Profile error:", error.message);
+        setProfile(null);
+        return;
+      }
+
+      setProfile(data);
+    }
+
+    async function initializeAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const currentUser = session?.user ?? null;
+
+      setUser(currentUser);
+
+      if (currentUser) {
+        await getProfile(currentUser.id);
+      }
+
+      setLoading(false);
+    }
+
+    initializeAuth();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+
+      setUser(currentUser);
+
+      if (currentUser) {
+        getProfile(currentUser.id);
+      } else {
+        setProfile(null);
+      }
     });
 
-    // پاک‌سازی Listener
     return () => {
       subscription.unsubscribe();
     };
   }, []);
 
-  return { user };
+  return { user, profile, loading };
 }
 
 export { useAuth };

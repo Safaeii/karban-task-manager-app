@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+:root {
+  --color-background: #F8FAFC;
+  --color-primary: #7DA9D8;
+  --color-secondary: #DCEBFA;
+  --color-card: #FFFFFF;
+  --color-text: #26364A;
+  --color-muted: #8493A5;
+  --color-border: #E8EEF5;
+
+  font-family: "Vazirmatn", Tahoma, sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}

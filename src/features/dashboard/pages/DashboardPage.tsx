@@ -8,7 +8,11 @@ import {totalTasks ,completedTasks,pendingTasks } from "../../dashboard/utils/da
 
 
 function DashboardPage() {
-  const { user } = useAuthContext();
+  const { user ,loading } = useAuthContext();
+
+  if (loading) {
+  return <p>در حال بررسی وضعیت حساب کاربری...</p>;
+}
   return (
     <main className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-6">
 <p className="text-sm text-gray-500 mt-2">

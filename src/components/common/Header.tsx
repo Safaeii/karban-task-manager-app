@@ -1,71 +1,135 @@
 
-import { FiMenu, FiSearch, FiBell, FiUser } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import {
+  FiSearch,
+  FiUser,
+  FiLogOut,
+} from "react-icons/fi";
 
-type HeaderProps = {
-  onMenuClick: () => void;
-};
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../features/auth/hooks/useAuthContext";
+import { signOut } from "../../features/auth/api/authApi";
 
-function Header({ onMenuClick }: HeaderProps) {
+function Header() {
+  const navigate = useNavigate();
+  const { user, profile } = useAuthContext();
+
+  async function handleLogout() {
+    const { error } = await signOut();
+
+    if (error) {
+      console.error("Logout error:", error.message);
+      return;
+    }
+
+    navigate("/");
+  }
+
   return (
-    <header className="bg-white min-h-16 px-4 flex items-center md:px-6 border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between w-full">
+    <header
+      dir="rtl"
+      className="sticky top-0 z-30 w-full border-b border-[#E8EEF5] bg-white/95 px-3 backdrop-blur-lg sm:px-6"
+    >
+      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-3">
 
-        {/* منو و لوگو */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onMenuClick}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-            aria-label="باز و بسته کردن منو"
+        {/* Right: Logo */}
+        <Link
+          to={user ? "/dashboard" : "/"}
+          className="flex shrink-0 items-center gap-1.5"
+        >
+        <img
+  src="../../../public/karban-logo.png.png"
+  alt="کاربان"
+  className="h-14 w-auto max-w-[100px] object-contain sm:h-16 sm:max-w-[120px] md:h-20 md:max-w-[150px]"
+/>
+        </Link>
+
+        {/* Center: Navigation */}
+        <nav className="hidden flex-1 items-center justify-center gap-4 lg:flex xl:gap-7">
+          <a
+            href="#home"
+            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
           >
-            <FiMenu size={20} />
-          </button>
+            خانه
+          </a>
 
-          <h1 className="text-lg md:text-xl font-bold">
-            کاربان
-          </h1>
-        </div>
-
-        {/* جستجو */}
-        <div className="hidden md:flex items-center w-full max-w-sm relative">
-          <FiSearch className="absolute right-3 text-gray-400" />
-
-          <input
-            type="text"
-            placeholder="جستجوی وظایف..."
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pr-10 pl-3 text-sm outline-none focus:border-blue-500"
-          />
-        </div>
-
-        {/* ثبت‌نام، اعلان و پروفایل */}
-        <div className="flex items-center gap-3">
-      
-          <button
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
-            aria-label="اعلان‌ها"
+          <a
+            href="#features"
+            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
           >
-            <FiBell size={20} />
-          </button>
+            امکانات
+          </a>
 
-          <div className="hidden sm:block">
-            <p className="text-xs text-gray-500">
-              خوش آمدید
-            </p>
-            <p className="text-sm font-semibold text-gray-800">
-              مدیر کاربان
-            </p>
+          <a
+            href="#about"
+            className="text-sm font-medium text-[#52657B] transition hover:text-[#7DA9D8]"
+          >
+            درباره ما
+          </a>
+        </nav>
+
+        {/* Left: Search + User */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+
+          {/* Capsule Search */}
+          <div className="relative w-[105px] sm:w-[160px] md:w-[190px] xl:w-[220px]">
+            <FiSearch
+              size={17}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8AA9C9]"
+            />
+
+            <input
+              type="search"
+              placeholder="جستجو..."
+              aria-label="جستجو"
+              className="h-10 w-full rounded-full border border-[#E4EFFB] bg-[#EFF6FD] pr-9 pl-3 text-xs text-[#26364A] outline-none transition-all placeholder:text-[#9AADC2] focus:border-[#A9C9EA] focus:bg-white focus:shadow-[0_0_0_4px_rgba(125,169,216,0.10)] sm:text-sm"
+            />
           </div>
 
-          <Link
-            to="/login"
-            className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-200 transition"
-            aria-label="ورود به حساب کاربری"
-            title="ورود"
-          >
-            <FiUser size={20} />
-          </Link>
+          {/* User Account */}
+          {user ? (
+            <div className="group relative shrink-0">
+              <button
+                type="button"
+                aria-label="حساب کاربری"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E4EFFB] bg-[#EFF6FD] text-[#7DA9D8] transition hover:bg-[#DCEBFA]"
+              >
+           <FiUser size={20} />
+              </button>
 
+              <div className="invisible absolute left-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[#E8EEF5] bg-white p-3 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <p className="truncate px-2 py-2 text-sm font-semibold text-[#26364A]">
+                  {profile?.username ?? user.email}
+                </p>
+
+                <Link
+                  to="/dashboard"
+                  className="block rounded-xl px-3 py-2 text-sm text-[#52657B] transition hover:bg-[#F1F7FE]"
+                >
+                  پنل کاربری
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-red-500 transition hover:bg-red-50"
+                >
+                  <FiLogOut size={16} />
+                  خروج
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              aria-label="ورود و ثبت‌نام"
+              title="ورود و ثبت‌نام"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E4EFFB] bg-[#EFF6FD] text-[#7DA9D8] transition hover:bg-[#DCEBFA]"
+            >
+              <FiUser size={20} />
+            </Link>
+          )}
         </div>
+
       </div>
     </header>
   );

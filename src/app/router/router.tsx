@@ -1,13 +1,26 @@
+
 import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
+
 import DashboardPage from "../../features/dashboard/pages/DashboardPage";
+
 import RegisterPage from "../../features/auth/pages/RegisterPage";
 import LoginPage from "../../features/auth/pages/LoginPage";
+import ProtectedRoute from "../../features/auth/components/ProtectedRoute";
+import LandingPage from "../../features/landing/pages/ LandingPage";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <LandingPage />,
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -20,9 +33,9 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-  path: "/login",
-  element: <LoginPage />,
-},
+    path: "/login",
+    element: <LoginPage />,
+  },
 ]);
 
 export default router;
