@@ -82,7 +82,9 @@ function useAuth() {
     initializeCategories();
   }, [user?.id]);
 
-  return { user, profile, loading };
+  return { user, profile, loading ,
+      updateProfile: setProfile,
+   };
 }
 
 export { useAuth };

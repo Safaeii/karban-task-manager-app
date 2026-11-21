@@ -13,4 +13,5 @@ export type AuthContextType = {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  updateProfile: (profile: Profile) => void;
 };

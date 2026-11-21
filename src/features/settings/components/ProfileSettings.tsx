@@ -1,57 +1,83 @@
 
-import {  useState } from "react";
+import { useState, type FormEvent } from "react";
 import { FiUser, FiMail, FiSave } from "react-icons/fi";
 
 import { useAuthContext } from "../../auth/hooks/useAuthContext";
 import { supabase } from "../../../shared/services/supabase";
-
+import type { Profile } from "../../auth/types/types";
 function ProfileSettings() {
-  const { user, profile } = useAuthContext();
+const { user, profile, updateProfile } = useAuthContext();
 
-const [firstName, setFirstName] = useState(
-  profile?.first_name ?? ""
-);
+  const [firstName, setFirstName] = useState(
+    profile?.first_name ?? ""
+  );
 
-const [lastName, setLastName] = useState(
-  profile?.last_name ?? ""
-);
+  const [lastName, setLastName] = useState(
+    profile?.last_name ?? ""
+  );
 
-const [username, setUsername] = useState(
-  profile?.username ?? ""
-);
+  const [username, setUsername] = useState(
+    profile?.username ?? ""
+  );
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!user?.id) return;
-
-    const userId = user.id;
+    if (!user?.id) {
+      setErrorMessage("کاربر وارد حساب کاربری نشده است.");
+      return;
+    }
 
     setSaving(true);
     setMessage("");
     setErrorMessage("");
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .update({
           first_name: firstName.trim(),
           last_name: lastName.trim(),
           username: username.trim(),
         })
-        .eq("id", userId);
+        .eq("id", user.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Profile update error:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.error("Profile update returned no rows:", {
+          userId: user.id,
+          profileId: profile?.id,
+        });
+
+        setErrorMessage(
+          "پروفایل پیدا نشد یا اجازه ویرایش آن را ندارید."
+        );
+        return;
+      }
+      updateProfile(data[0] as Profile);
 
       setMessage("اطلاعات پروفایل با موفقیت ذخیره شد.");
     } catch (error) {
       console.error("Profile update error:", error);
-      setErrorMessage("ذخیره اطلاعات با مشکل مواجه شد.");
+
+      setErrorMessage(
+        "ذخیره اطلاعات با مشکل مواجه شد. Console را بررسی کنید."
+      );
     } finally {
       setSaving(false);
     }
@@ -63,6 +89,7 @@ const [username, setUsername] = useState(
         <h2 className="text-lg font-bold text-[#26364A]">
           اطلاعات حساب کاربری
         </h2>
+
         <p className="mt-2 text-sm text-[#8493A5]">
           اطلاعات شخصی خود را مشاهده و ویرایش کنید.
         </p>
@@ -76,8 +103,7 @@ const [username, setUsername] = useState(
 
         <div>
           <p className="font-bold text-[#26364A]">
-            {profile?.first_name || "کاربر"}{" "}
-            {profile?.last_name || ""}
+            {firstName || "کاربر"} {lastName}
           </p>
 
           <p className="mt-1 text-sm text-[#8493A5]">
@@ -157,13 +183,14 @@ const [username, setUsername] = useState(
           </p>
         </div>
 
-        {/* پیام‌ها */}
+        {/* پیام موفقیت */}
         {message && (
           <p className="rounded-xl bg-green-50 p-3 text-sm text-green-700">
             {message}
           </p>
         )}
 
+        {/* پیام خطا */}
         {errorMessage && (
           <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
             {errorMessage}
@@ -177,6 +204,7 @@ const [username, setUsername] = useState(
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7DA9D8] px-5 py-3 font-medium text-white transition hover:bg-[#6897C9] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           <FiSave size={18} />
+
           {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
         </button>
       </form>
