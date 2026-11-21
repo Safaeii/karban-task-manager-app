@@ -8,6 +8,7 @@ const tasks: Task[] = [
     status: "todo",
     priority: "high",
     createdAt: "2026-11-09",
+    categoryId: null,
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ const tasks: Task[] = [
     status: "in-progress",
     priority: "medium",
     createdAt: "2026-11-09",
+    categoryId: null,
   },
 ];
 

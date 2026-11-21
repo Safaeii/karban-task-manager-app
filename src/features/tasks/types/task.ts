@@ -8,5 +8,6 @@ export interface Task {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
+  categoryId: string | null;
   createdAt: string;
 }

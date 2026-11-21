@@ -14,6 +14,12 @@ import {
   deleteTask,
 } from "../../api/tasksApi";
 
+import {
+  getCategories,
+} from "../../categories/api/categoriesApi";
+
+import type { Category } from "../../categories/types/category";
+
 import type {
   Task,
   TaskPriority,
@@ -22,28 +28,38 @@ import type {
 
 import CreateTaskForm from "../../tasks/components/CreateTaskForm";
 
+interface TaskFormData {
+  title: string;
+  description: string;
+  priority: TaskPriority;
+  categoryId: string | null;
+}
+
 function DashboardPage() {
   const { user } = useAuthContext();
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const formRef = useRef<HTMLDivElement>(null);
 
-  // دریافت وظایف
+  // دریافت وظایف و دسته‌بندی‌ها
   useEffect(() => {
     if (!user) return;
 
     const userId = user.id;
     let isMounted = true;
 
-    async function loadTasks() {
-      try {
-        setLoadingTasks(true);
-        setError(null);
+    async function loadData() {
+      setLoadingTasks(true);
+      setError(null);
 
+      try {
         const data = await getTasks(userId);
 
         if (isMounted) {
@@ -60,9 +76,23 @@ function DashboardPage() {
           setLoadingTasks(false);
         }
       }
+
+      try {
+        const data = await getCategories(userId);
+
+        if (isMounted) {
+          setCategories(data);
+        }
+      } catch (err) {
+        console.error("خطا در دریافت دسته‌بندی‌ها:", err);
+
+        if (isMounted) {
+          setError("دریافت دسته‌بندی‌ها با مشکل مواجه شد.");
+        }
+      }
     }
 
-    loadTasks();
+    loadData();
 
     return () => {
       isMounted = false;
@@ -70,11 +100,7 @@ function DashboardPage() {
   }, [user]);
 
   // ایجاد وظیفه
-  async function handleCreateTask(task: {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-  }) {
+  async function handleCreateTask(task: TaskFormData) {
     if (!user) return;
 
     try {
@@ -90,11 +116,7 @@ function DashboardPage() {
   }
 
   // ذخیره ویرایش وظیفه
-  async function handleSaveTask(task: {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-  }) {
+  async function handleSaveTask(task: TaskFormData) {
     if (!user || !editingTask) return;
 
     try {
@@ -203,37 +225,36 @@ function DashboardPage() {
       )}
 
       {/* آمار وظایف */}
-<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-  <StatsCard
-    title="کل وظایف"
-    value={tasks.length}
-    color="#7DA9D8"
-  />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatsCard
+          title="کل وظایف"
+          value={tasks.length}
+          color="#7DA9D8"
+        />
 
-  <StatsCard
-    title="وظایف انجام‌شده"
-    value={tasks.filter((task) => task.status === "done").length}
-    color="#687653"
-  />
+        <StatsCard
+          title="وظایف انجام‌شده"
+          value={tasks.filter((task) => task.status === "done").length}
+          color="#687653"
+        />
 
-  <StatsCard
-    title="وظایف در حال انجام"
-    value={
-      tasks.filter((task) => task.status === "in-progress").length
-    }
-    color="#E5A45B"
-  />
-</div>
+        <StatsCard
+          title="وظایف در حال انجام"
+          value={
+            tasks.filter((task) => task.status === "in-progress").length
+          }
+          color="#E5A45B"
+        />
+      </div>
 
       {/* فرم ایجاد و ویرایش */}
       {!loadingTasks && user && (
         <div ref={formRef} className="scroll-mt-8">
           <CreateTaskForm
             key={editingTask?.id ?? "new-task"}
+            categories={categories}
             initialTask={editingTask}
-            onSubmit={
-              editingTask ? handleSaveTask : handleCreateTask
-            }
+            onSubmit={editingTask ? handleSaveTask : handleCreateTask}
             onCancel={() => setEditingTask(null)}
           />
         </div>
@@ -257,4 +278,3 @@ function DashboardPage() {
 }
 
 export default DashboardPage;
-

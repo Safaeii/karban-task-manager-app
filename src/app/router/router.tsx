@@ -13,7 +13,7 @@ import LandingPage from "../../features/landing/pages/LandingPage";
 import PlaceholderPage from "../../features/common/components/PlaceholderPage";
 
 import TasksPage from "../../features/tasks/pages/TasksPage";
-
+import CategoriesPage from "../../features/categories/pages/CategoriesPage";
 // ساختار مشترک صفحات محافظت‌شده
 const protectedPage = (element: React.ReactNode) => ({
   element: (
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/categories",
-    ...protectedPage(<PlaceholderPage title="دسته‌بندی‌ها" />),
+    ...protectedPage(<CategoriesPage />),
   },
   {
     path: "/tags",

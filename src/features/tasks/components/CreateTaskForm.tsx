@@ -1,20 +1,25 @@
 
 import { useState, type FormEvent } from "react";
+
 import type { Task, TaskPriority } from "../types/task";
+import type { Category } from "../../categories/types/category";
 
 interface CreateTaskFormProps {
   onSubmit: (task: {
     title: string;
     description: string;
     priority: TaskPriority;
+    categoryId: string | null;
   }) => void;
 
+  categories: Category[];
   initialTask?: Task | null;
   onCancel?: () => void;
 }
 
 function CreateTaskForm({
   onSubmit,
+  categories,
   initialTask,
   onCancel,
 }: CreateTaskFormProps) {
@@ -28,6 +33,10 @@ function CreateTaskForm({
     initialTask?.priority ?? "medium"
   );
 
+  const [categoryId, setCategoryId] = useState(
+    initialTask?.categoryId ?? ""
+  );
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -39,6 +48,7 @@ function CreateTaskForm({
       title: title.trim(),
       description: description.trim(),
       priority,
+      categoryId: categoryId || null,
     });
   }
 
@@ -100,6 +110,27 @@ function CreateTaskForm({
             <option value="low">کم</option>
             <option value="medium">متوسط</option>
             <option value="high">زیاد</option>
+          </select>
+        </div>
+
+        {/* دسته‌بندی */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-[#26364A]">
+            دسته‌بندی وظیفه
+          </label>
+
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            className="w-full rounded-xl border border-[#E8EEF5] bg-[#F8FAFC] px-4 py-3 text-sm outline-none transition focus:border-[#7DA9D8]"
+          >
+            <option value="">بدون دسته‌بندی</option>
+
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </select>
         </div>
 

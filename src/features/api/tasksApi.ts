@@ -1,6 +1,8 @@
+
 import { supabase } from "../../shared/services/supabase";
 import type { Task, TaskPriority, TaskStatus } from "../tasks/types/task";
 
+// دریافت تمام وظایف کاربر
 export async function getTasks(userId: string): Promise<Task[]> {
   const { data, error } = await supabase
     .from("tasks")
@@ -18,9 +20,12 @@ export async function getTasks(userId: string): Promise<Task[]> {
     description: task.description ?? "",
     status: task.status,
     priority: task.priority,
+    categoryId: task.category_id ?? null,
     createdAt: task.created_at,
   }));
 }
+
+// تغییر وضعیت وظیفه
 export async function updateTaskStatus(
   taskId: string,
   userId: string,
@@ -36,12 +41,15 @@ export async function updateTaskStatus(
     throw error;
   }
 }
+
+// ایجاد وظیفه جدید
 export async function createTask(
   userId: string,
   task: {
     title: string;
     description: string;
     priority: TaskPriority;
+    categoryId: string | null;
   }
 ): Promise<Task> {
   const { data, error } = await supabase
@@ -51,6 +59,7 @@ export async function createTask(
       title: task.title,
       description: task.description,
       priority: task.priority,
+      category_id: task.categoryId,
       status: "todo",
     })
     .select()
@@ -66,12 +75,12 @@ export async function createTask(
     description: data.description ?? "",
     status: data.status,
     priority: data.priority,
+    categoryId: data.category_id ?? null,
     createdAt: data.created_at,
   };
 }
 
-
-
+// ویرایش وظیفه
 export async function updateTask(
   taskId: string,
   userId: string,
@@ -79,6 +88,7 @@ export async function updateTask(
     title: string;
     description: string;
     priority: TaskPriority;
+    categoryId: string | null;
   }
 ): Promise<Task> {
   const { data, error } = await supabase
@@ -87,6 +97,7 @@ export async function updateTask(
       title: task.title,
       description: task.description,
       priority: task.priority,
+      category_id: task.categoryId,
     })
     .eq("id", taskId)
     .eq("user_id", userId)
@@ -103,11 +114,12 @@ export async function updateTask(
     description: data.description ?? "",
     status: data.status,
     priority: data.priority,
+    categoryId: data.category_id ?? null,
     createdAt: data.created_at,
   };
 }
 
-
+// حذف وظیفه
 export async function deleteTask(
   taskId: string,
   userId: string
@@ -118,5 +130,7 @@ export async function deleteTask(
     .eq("id", taskId)
     .eq("user_id", userId);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 }
