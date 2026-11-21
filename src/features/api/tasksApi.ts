@@ -70,6 +70,44 @@ export async function createTask(
   };
 }
 
+
+
+export async function updateTask(
+  taskId: string,
+  userId: string,
+  task: {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+  }
+): Promise<Task> {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+    })
+    .eq("id", taskId)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    id: data.id,
+    title: data.title,
+    description: data.description ?? "",
+    status: data.status,
+    priority: data.priority,
+    createdAt: data.created_at,
+  };
+}
+
+
 export async function deleteTask(
   taskId: string,
   userId: string

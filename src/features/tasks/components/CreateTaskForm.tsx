@@ -1,6 +1,6 @@
 
 import { useState, type FormEvent } from "react";
-import type { TaskPriority } from "../types/task";
+import type { Task, TaskPriority } from "../types/task";
 
 interface CreateTaskFormProps {
   onSubmit: (task: {
@@ -8,12 +8,25 @@ interface CreateTaskFormProps {
     description: string;
     priority: TaskPriority;
   }) => void;
+
+  initialTask?: Task | null;
+  onCancel?: () => void;
 }
 
-function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<TaskPriority>("medium");
+function CreateTaskForm({
+  onSubmit,
+  initialTask,
+  onCancel,
+}: CreateTaskFormProps) {
+  const [title, setTitle] = useState(initialTask?.title ?? "");
+
+  const [description, setDescription] = useState(
+    initialTask?.description ?? ""
+  );
+
+  const [priority, setPriority] = useState<TaskPriority>(
+    initialTask?.priority ?? "medium"
+  );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,10 +40,6 @@ function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
       description: description.trim(),
       priority,
     });
-
-    setTitle("");
-    setDescription("");
-    setPriority("medium");
   }
 
   return (
@@ -40,10 +49,11 @@ function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
       className="w-full rounded-2xl border border-[#E8EEF5] bg-white p-5 shadow-sm sm:p-6"
     >
       <h2 className="mb-5 text-lg font-bold text-[#26364A]">
-        افزودن وظیفه جدید
+        {initialTask ? "ویرایش وظیفه" : "افزودن وظیفه جدید"}
       </h2>
 
       <div className="space-y-4">
+        {/* عنوان وظیفه */}
         <div>
           <label className="mb-2 block text-sm font-medium text-[#26364A]">
             عنوان وظیفه
@@ -59,6 +69,7 @@ function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
           />
         </div>
 
+        {/* توضیحات */}
         <div>
           <label className="mb-2 block text-sm font-medium text-[#26364A]">
             توضیحات
@@ -73,6 +84,7 @@ function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
           />
         </div>
 
+        {/* اولویت */}
         <div>
           <label className="mb-2 block text-sm font-medium text-[#26364A]">
             اولویت وظیفه
@@ -91,13 +103,26 @@ function CreateTaskForm({ onSubmit }: CreateTaskFormProps) {
           </select>
         </div>
 
-        <button
-          type="submit"
-          disabled={!title.trim()}
-          className="w-full rounded-xl bg-[#7DA9D8] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#6796C9] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-        >
-          افزودن وظیفه
-        </button>
+        {/* دکمه‌ها */}
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            disabled={!title.trim()}
+            className="w-full rounded-xl bg-[#7DA9D8] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#6796C9] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          >
+            {initialTask ? "ذخیره تغییرات" : "افزودن وظیفه"}
+          </button>
+
+          {initialTask && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="w-full rounded-xl border border-[#E8EEF5] px-5 py-3 text-sm font-semibold text-[#8493A5] transition hover:bg-[#F8FAFC] sm:w-auto"
+            >
+              انصراف
+            </button>
+          )}
+        </div>
       </div>
     </form>
   );

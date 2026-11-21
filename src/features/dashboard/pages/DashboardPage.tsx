@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import StatsCard from "../components/StatsCard";
 import KanbanBoard from "../components/KanbanBoard";
@@ -9,6 +9,7 @@ import { useAuthContext } from "../../auth/hooks/useAuthContext";
 import {
   getTasks,
   createTask,
+  updateTask,
   updateTaskStatus,
   deleteTask,
 } from "../../api/tasksApi";
@@ -22,42 +23,53 @@ import type {
 import CreateTaskForm from "../../tasks/components/CreateTaskForm";
 
 function DashboardPage() {
-  const { user, loading } = useAuthContext();
+  const { user } = useAuthContext();
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // دریافت وظایف از Supabase
+  const formRef = useRef<HTMLDivElement>(null);
+
+  // دریافت وظایف
   useEffect(() => {
-    async function loadTasks() {
-      if (!user) {
-        setTasks([]);
-        setLoadingTasks(false);
-        return;
-      }
+    if (!user) return;
 
+    const userId = user.id;
+    let isMounted = true;
+
+    async function loadTasks() {
       try {
         setLoadingTasks(true);
         setError(null);
 
-        const data = await getTasks(user.id);
+        const data = await getTasks(userId);
 
-        setTasks(data);
+        if (isMounted) {
+          setTasks(data);
+        }
       } catch (err) {
         console.error("خطا در دریافت وظایف:", err);
-        setError("دریافت وظایف با مشکل مواجه شد.");
+
+        if (isMounted) {
+          setError("دریافت وظایف با مشکل مواجه شد.");
+        }
       } finally {
-        setLoadingTasks(false);
+        if (isMounted) {
+          setLoadingTasks(false);
+        }
       }
     }
 
-    if (!loading) {
-      loadTasks();
-    }
-  }, [user, loading]);
+    loadTasks();
 
-  // ثبت وظیفه جدید
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  // ایجاد وظیفه
   async function handleCreateTask(task: {
     title: string;
     description: string;
@@ -72,67 +84,73 @@ function DashboardPage() {
 
       setTasks((prevTasks) => [newTask, ...prevTasks]);
     } catch (err) {
-      console.error("خطا در ثبت وظیفه:", err);
-      setError("ثبت وظیفه با مشکل مواجه شد.");
+      console.error("خطا در ایجاد وظیفه:", err);
+      setError("ایجاد وظیفه با مشکل مواجه شد.");
     }
   }
 
-  // تغییر وضعیت وظیفه با Drag & Drop
-  async function handleTaskStatusChange(
-    taskId: string,
-    newStatus: TaskStatus
-  ) {
-    if (!user) return;
-
-    const previousTask = tasks.find(
-      (task) => task.id === taskId
-    );
-
-    if (!previousTask || previousTask.status === newStatus) {
-      return;
-    }
-
-    // تغییر فوری وضعیت در رابط کاربری
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId
-          ? { ...task, status: newStatus }
-          : task
-      )
-    );
+  // ذخیره ویرایش وظیفه
+  async function handleSaveTask(task: {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+  }) {
+    if (!user || !editingTask) return;
 
     try {
       setError(null);
 
-      // ذخیره وضعیت جدید در Supabase
-      await updateTaskStatus(
-        taskId,
+      const updatedTask = await updateTask(
+        editingTask.id,
         user.id,
-        newStatus
+        task
       );
-    } catch (err) {
-      console.error("خطا در تغییر وضعیت:", err);
 
-      // بازگرداندن وضعیت قبلی در صورت خطا
-      setTasks((currentTasks) =>
-        currentTasks.map((task) =>
-          task.id === taskId
-            ? { ...task, status: previousTask.status }
-            : task
+      setTasks((prevTasks) =>
+        prevTasks.map((item) =>
+          item.id === updatedTask.id ? updatedTask : item
         )
       );
 
-      setError("تغییر وضعیت وظیفه ذخیره نشد.");
+      setEditingTask(null);
+    } catch (err) {
+      console.error("خطا در ویرایش وظیفه:", err);
+      setError("ویرایش وظیفه با مشکل مواجه شد.");
+    }
+  }
+
+  // تغییر وضعیت وظیفه
+  async function handleTaskStatusChange(
+    taskId: string,
+    status: TaskStatus
+  ) {
+    if (!user) return;
+
+    try {
+      setError(null);
+
+      await updateTaskStatus(taskId, user.id, status);
+
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, status } : task
+        )
+      );
+    } catch (err) {
+      console.error("خطا در تغییر وضعیت وظیفه:", err);
+      setError("تغییر وضعیت وظیفه با مشکل مواجه شد.");
     }
   }
 
   // حذف وظیفه
   async function handleDeleteTask(taskId: string) {
+    if (!user) return;
+
     const confirmed = window.confirm(
-      "آیا از حذف این وظیفه مطمئن هستی؟"
+      "آیا از حذف این وظیفه مطمئن هستید؟"
     );
 
-    if (!confirmed || !user) return;
+    if (!confirmed) return;
 
     try {
       setError(null);
@@ -142,144 +160,101 @@ function DashboardPage() {
       setTasks((prevTasks) =>
         prevTasks.filter((task) => task.id !== taskId)
       );
+
+      if (editingTask?.id === taskId) {
+        setEditingTask(null);
+      }
     } catch (err) {
       console.error("خطا در حذف وظیفه:", err);
       setError("حذف وظیفه با مشکل مواجه شد.");
     }
   }
 
-  // محاسبه آمار
-  const totalTasks = tasks.length;
+  // انتخاب وظیفه برای ویرایش و اسکرول به فرم
+  function handleEditTask(task: Task) {
+    setEditingTask(task);
 
-  const completedTasks = tasks.filter(
-    (task) => task.status === "done"
-  ).length;
-
-  const pendingTasks = tasks.filter(
-    (task) => task.status === "todo"
-  ).length;
-
-  const inProgressTasks = tasks.filter(
-    (task) => task.status === "in-progress"
-  ).length;
-
-  // بررسی وضعیت احراز هویت
-  if (loading) {
-    return (
-      <div className="p-6 text-center text-gray-500">
-        در حال بررسی وضعیت حساب کاربری...
-      </div>
-    );
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
   }
 
   return (
-    <main
-      dir="rtl"
-      className="min-h-screen space-y-6 bg-[#F8FAFC] p-3 sm:p-4 md:p-6 lg:p-8"
-    >
-      {/* Header */}
+    <main dir="rtl" className="space-y-6">
+      {/* عنوان داشبورد */}
       <div>
-        <p className="mb-2 text-sm text-gray-500">
-          ایمیل کاربر: {user?.email ?? "کاربری وارد نشده است"}
-        </p>
-
-        <h1 className="text-xl font-bold text-[#26364A] sm:text-2xl">
-          داشبورد کاربان
+        <h1 className="text-2xl font-bold text-[#26364A]">
+          داشبورد مدیریت وظایف
         </h1>
 
         <p className="mt-2 text-sm text-[#8493A5]">
-          به پنل مدیریت وظایف خوش آمدید.
+          وظایف خودت رو مدیریت و پیگیری کن.
         </p>
       </div>
 
-      {/* Loading */}
-      {loadingTasks && (
-        <div className="rounded-xl border border-[#E8EEF5] bg-white p-6 text-center text-gray-500">
-          در حال دریافت وظایف...
-        </div>
-      )}
-
-      {/* Create Task Form */}
-      {!loadingTasks && user && (
-        <CreateTaskForm onSubmit={handleCreateTask} />
-      )}
-
-      {/* Error */}
+      {/* نمایش خطا */}
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
           {error}
         </div>
       )}
 
-      {!loadingTasks && !error && (
-        <>
-          {/* Statistics */}
-          <section>
-            <h2 className="mb-4 text-lg font-bold text-[#26364A]">
-              خلاصه وضعیت وظایف
-            </h2>
+      {/* آمار وظایف */}
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <StatsCard
+    title="کل وظایف"
+    value={tasks.length}
+    color="#7DA9D8"
+  />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <StatsCard
-                title="کل وظایف"
-                value={totalTasks}
-                color="text-blue-600"
-              />
+  <StatsCard
+    title="وظایف انجام‌شده"
+    value={tasks.filter((task) => task.status === "done").length}
+    color="#687653"
+  />
 
-              <StatsCard
-                title="انجام شده"
-                value={completedTasks}
-                color="text-green-600"
-              />
+  <StatsCard
+    title="وظایف در حال انجام"
+    value={
+      tasks.filter((task) => task.status === "in-progress").length
+    }
+    color="#E5A45B"
+  />
+</div>
 
-              <StatsCard
-                title="باقی‌مانده"
-                value={pendingTasks}
-                color="text-orange-600"
-              />
+      {/* فرم ایجاد و ویرایش */}
+      {!loadingTasks && user && (
+        <div ref={formRef} className="scroll-mt-8">
+          <CreateTaskForm
+            key={editingTask?.id ?? "new-task"}
+            initialTask={editingTask}
+            onSubmit={
+              editingTask ? handleSaveTask : handleCreateTask
+            }
+            onCancel={() => setEditingTask(null)}
+          />
+        </div>
+      )}
 
-              <StatsCard
-                title="در حال انجام"
-                value={inProgressTasks}
-                color="text-indigo-600"
-              />
-            </div>
-          </section>
-
-          {/* Kanban Board */}
-          <section className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-bold text-[#26364A]">
-                برد مدیریت وظایف
-              </h2>
-
-              <span className="text-sm text-gray-500">
-                {totalTasks} وظیفه
-              </span>
-            </div>
-
-            {tasks.length === 0 ? (
-              <div className="rounded-xl border border-[#E8EEF5] bg-white p-8 text-center">
-                <p className="font-medium text-[#26364A]">
-                  هنوز وظیفه‌ای ثبت نکرده‌ای.
-                </p>
-
-                <p className="mt-2 text-sm text-gray-500">
-                  اولین وظیفه خودت را از فرم بالا اضافه کن.
-                </p>
-              </div>
-            ) : (
-              <KanbanBoard
-                tasks={tasks}
-                onStatusChange={handleTaskStatusChange}
-                onDelete={handleDeleteTask}
-              />
-            )}
-          </section>
-        </>
+      {/* برد وظایف */}
+      {loadingTasks ? (
+        <div className="py-10 text-center text-[#8493A5]">
+          در حال دریافت وظایف...
+        </div>
+      ) : (
+        <KanbanBoard
+          tasks={tasks}
+          onStatusChange={handleTaskStatusChange}
+          onDelete={handleDeleteTask}
+          onEdit={handleEditTask}
+        />
       )}
     </main>
   );
 }
 
 export default DashboardPage;
+

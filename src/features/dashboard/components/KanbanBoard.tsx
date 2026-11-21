@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
-import { FiTrash2 } from "react-icons/fi";
+import { FiTrash2, FiEdit2 } from "react-icons/fi";
 
 import type { Task, TaskStatus } from "../../tasks/types/task";
 
@@ -26,9 +26,11 @@ const columns: { id: TaskStatus; title: string }[] = [
 function DraggableTaskCard({
   task,
   onDelete,
+  onEdit,
 }: {
   task: Task;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }) {
   const {
     attributes,
@@ -54,26 +56,44 @@ function DraggableTaskCard({
       className="touch-none cursor-grab rounded-xl border border-[#E8EEF5] bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="min-w-0 font-semibold text-[#26364A]">
+        <h3 className="min-w-0 break-words font-semibold text-[#26364A]">
           {task.title}
         </h3>
 
-        <button
-          type="button"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={(event) => {
-            event.stopPropagation();
-            onDelete(task.id);
-          }}
-          className="shrink-0 rounded-lg p-2 text-red-500 transition hover:bg-red-50"
-          aria-label="حذف وظیفه"
-          title="حذف وظیفه"
-        >
-          <FiTrash2 size={17} />
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          {/* دکمه ویرایش */}
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit(task);
+            }}
+            className="rounded-lg p-2 text-[#7DA9D8] transition hover:bg-[#DCEBFA]"
+            aria-label="ویرایش وظیفه"
+            title="ویرایش وظیفه"
+          >
+            <FiEdit2 size={17} />
+          </button>
+
+          {/* دکمه حذف */}
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete(task.id);
+            }}
+            className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
+            aria-label="حذف وظیفه"
+            title="حذف وظیفه"
+          >
+            <FiTrash2 size={17} />
+          </button>
+        </div>
       </div>
 
-      <p className="mt-2 text-sm leading-6 text-[#8493A5]">
+      <p className="mt-2 break-words text-sm leading-6 text-[#8493A5]">
         {task.description || "بدون توضیحات"}
       </p>
 
@@ -108,11 +128,13 @@ function DroppableColumn({
   title,
   tasks,
   onDelete,
+  onEdit,
 }: {
   id: TaskStatus;
   title: string;
   tasks: Task[];
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -143,6 +165,7 @@ function DroppableColumn({
             key={task.id}
             task={task}
             onDelete={onDelete}
+            onEdit={onEdit}
           />
         ))}
 
@@ -166,6 +189,7 @@ interface KanbanBoardProps {
     status: TaskStatus
   ) => void;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }
 
 // برد اصلی کانبان
@@ -173,6 +197,7 @@ function KanbanBoard({
   tasks,
   onStatusChange,
   onDelete,
+  onEdit,
 }: KanbanBoardProps) {
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -223,6 +248,7 @@ function KanbanBoard({
               (task) => task.status === column.id
             )}
             onDelete={onDelete}
+            onEdit={onEdit}
           />
         ))}
       </div>
