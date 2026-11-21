@@ -1,12 +1,17 @@
+
 import { NavLink } from "react-router-dom";
-import { FiHome, FiCheckSquare, FiSettings ,FiTag, FiFolder  } from "react-icons/fi";
-
-
+import {
+  FiHome,
+  FiCheckSquare,
+  FiSettings,
+  FiTag,
+  FiFolder,
+} from "react-icons/fi";
 
 const menuItems = [
   {
     title: "داشبورد",
-    path: "/",
+    path: "/dashboard",
     icon: FiHome,
   },
   {
@@ -31,34 +36,36 @@ const menuItems = [
   },
 ];
 
-
 type SidebarProps = {
   isOpen: boolean;
 };
+
 function Sidebar({ isOpen }: SidebarProps) {
   return (
     <aside
-  className={`${isOpen ? "block" : "hidden"} md:block w-full md:w-64 border-b md:border-b-0 md:border-r bg-white md:min-h-screen md:shrink-0`}
->
-      <nav className=" p-4 flex flex-row md:flex-col gap-2 overflow-x-auto">
+      className={`${
+        isOpen ? "block" : "hidden"
+      } md:block w-full md:w-64 border-b md:border-b-0 md:border-r border-[#E8EEF5] bg-white md:min-h-screen md:shrink-0`}
+    >
+      <nav className="flex flex-row gap-2 overflow-x-auto p-4 md:flex-col">
         {menuItems.map((item) => {
           const Icon = item.icon;
 
           return (
-<NavLink
-  to={item.path}
-  key={item.path}
-  className={({ isActive }) => {
-    if (isActive) {
-      return "shrink-0 md:w-full rounded-lg px-3 py-2 bg-blue-600 text-white flex items-center gap-3 min-h-11";
-    }
-
-    return "shrink-0 md:w-full rounded-lg px-3 py-2 text-gray-600 flex items-center gap-3 min-h-11";
-  }}
->
-  <Icon />
-  {item.title}
-</NavLink>
+            <NavLink
+              to={item.path}
+              key={item.path}
+              className={({ isActive }) =>
+                `flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors md:w-full ${
+                  isActive
+                    ? "bg-[#7DA9D8] text-white"
+                    : "text-[#8493A5] hover:bg-[#F8FAFC] hover:text-[#26364A]"
+                }`
+              }
+            >
+              <Icon size={19} />
+              <span>{item.title}</span>
+            </NavLink>
           );
         })}
       </nav>
@@ -67,4 +74,3 @@ function Sidebar({ isOpen }: SidebarProps) {
 }
 
 export default Sidebar;
-
