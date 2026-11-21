@@ -10,10 +10,11 @@ import RegisterPage from "../../features/auth/pages/RegisterPage";
 import LoginPage from "../../features/auth/pages/LoginPage";
 import ProtectedRoute from "../../features/auth/components/ProtectedRoute";
 import LandingPage from "../../features/landing/pages/LandingPage";
-import PlaceholderPage from "../../features/common/components/PlaceholderPage";
 
 import TasksPage from "../../features/tasks/pages/TasksPage";
 import CategoriesPage from "../../features/categories/pages/CategoriesPage";
+import TagsPage from "../../features/tags/pages/TagsPage";
+import SettingsPage from "../../features/settings/pages/SettingsPage";
 // ساختار مشترک صفحات محافظت‌شده
 const protectedPage = (element: React.ReactNode) => ({
   element: (
@@ -53,11 +54,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/tags",
-    ...protectedPage(<PlaceholderPage title="برچسب‌ها" />),
+    ...protectedPage(<TagsPage />),
   },
   {
     path: "/settings",
-    ...protectedPage(<PlaceholderPage title="تنظیمات" />),
+    ...protectedPage(<SettingsPage/>),
   },
   {
     path: "/register",
