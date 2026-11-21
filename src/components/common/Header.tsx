@@ -1,8 +1,11 @@
 
+import { useState } from "react";
 import {
   FiMenu,
   FiUser,
   FiLogOut,
+  FiX,
+  FiChevronLeft,
 } from "react-icons/fi";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -16,6 +19,7 @@ interface HeaderProps {
 function Header({ onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
   const { user, profile } = useAuthContext();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   async function handleLogout() {
     const { error } = await signOut();
@@ -25,93 +29,183 @@ function Header({ onMenuClick }: HeaderProps) {
       return;
     }
 
+    setMobileMenuOpen(false);
     navigate("/");
   }
+
+  const navLinks = [
+    { label: "خانه", to: "/#home" },
+    { label: "امکانات", to: "/#features" },
+    { label: "درباره ما", to: "/about" },
+  ];
+
+  const navLinkClass =
+    "relative py-2 text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white";
 
   return (
     <header
       dir="rtl"
-      className="sticky top-0 z-40 w-full border-b border-[#E8EEF5] bg-white"
+      className="sticky top-0 z-50 w-full bg-[#7DA9D8] shadow-md"
     >
-      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:px-5 lg:px-6">
+      <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
 
-        {/* لوگو و منو */}
-        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+        {/* لوگو */}
+        <div className="flex shrink-0 items-center gap-3">
           {onMenuClick && (
             <button
               type="button"
               onClick={onMenuClick}
               aria-label="باز کردن منو"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[#26364A] hover:bg-[#EFF6FD] md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition hover:bg-white/15 md:hidden"
             >
-              <FiMenu size={24} />
+              <FiMenu size={23} />
             </button>
           )}
 
-          <Link to="/" className="flex shrink-0 items-center">
+          <Link
+            to="/"
+            className="flex items-center"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <img
-              src="../../../public/karban-logo.png.png"
+              src="/karban-logo.png.png"
               alt="لوگوی کاربان"
-              className="h-12 w-auto max-w-[130px] object-contain sm:h-16 sm:max-w-[180px] lg:h-20 lg:max-w-[220px]"
+              className="h-12 w-auto max-w-[145px] object-contain sm:h-14 sm:max-w-[175px]"
             />
           </Link>
         </div>
 
-        {/* لینک‌های اصلی */}
-        <nav className="hidden items-center gap-5 text-sm font-medium text-[#52657B] lg:flex">
-          <Link to="/#home" className="transition hover:text-[#7DA9D8]">
-            خانه
-          </Link>
-          <Link to="/#features" className="transition hover:text-[#7DA9D8]">
-            امکانات
-          </Link>
-          <Link to="/#about" className="transition hover:text-[#7DA9D8]">
-            درباره ما
-          </Link>
+        {/* منوی دسکتاپ */}
+        <nav className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`${navLinkClass} group`}
+            >
+              {link.label}
+
+              <span className="absolute bottom-0 right-0 h-0.5 w-0 rounded-full bg-white transition-all duration-300 group-hover:w-full" />
+            </Link>
+          ))}
         </nav>
 
         {/* حساب کاربری */}
-        <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {user ? (
             <>
-              <div className="hidden min-w-0 items-center gap-2 sm:flex">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FD] text-[#7DA9D8]">
+              <div className="hidden items-center gap-3 sm:flex">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/15 text-white">
                   <FiUser size={19} />
                 </div>
 
-                <span className="max-w-[110px] truncate text-xs font-semibold text-[#26364A] lg:max-w-[150px] lg:text-sm">
-                  {profile?.username ?? user.email}
-                </span>
+                <div className="hidden flex-col gap-0.5 xl:flex">
+                  <span className="max-w-[130px] truncate text-sm font-bold text-white">
+                    {profile?.username || "کاربر"}
+                  </span>
+
+                  <span className="text-[11px] text-white/75">
+                    خوش آمدید
+                  </span>
+                </div>
               </div>
 
               <Link
                 to="/dashboard"
-                className="whitespace-nowrap rounded-xl bg-[#EFF6FD] px-2.5 py-2 text-[11px] font-semibold text-[#526F91] transition hover:bg-[#DCEBFA] sm:px-4 sm:text-sm"
+                className="flex items-center gap-2 rounded-xl bg-white px-3 py-2.5 text-xs font-bold text-[#344F70] transition hover:bg-[#EFF4FA] sm:px-4 sm:text-sm"
               >
                 پنل کاربری
+                <FiChevronLeft size={16} />
               </Link>
 
               <button
                 type="button"
                 onClick={handleLogout}
-                aria-label="خروج"
-                className="flex items-center gap-1.5 whitespace-nowrap rounded-xl px-2.5 py-2 text-[11px] font-semibold text-rose-500 transition hover:bg-rose-50 sm:px-3 sm:text-sm"
+                aria-label="خروج از حساب"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition hover:bg-white/15"
               >
-                <FiLogOut size={16} />
-                <span className="hidden sm:inline">خروج</span>
+                <FiLogOut size={19} />
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#7DA9D8] px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-[#6796C9] sm:px-4 sm:text-sm"
-            >
-              <FiUser size={17} />
-              ورود
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15 sm:block"
+              >
+                ورود
+              </Link>
+
+              <Link
+                to="/register"
+                className="rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-[#344F70] shadow-sm transition hover:bg-[#EFF4FA] sm:px-5 sm:text-sm"
+              >
+                شروع رایگان
+              </Link>
+            </>
           )}
+
+          {/* دکمه منوی موبایل */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "بستن منو" : "باز کردن منو"}
+            aria-expanded={mobileMenuOpen}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition hover:bg-white/15 lg:hidden"
+          >
+            {mobileMenuOpen ? <FiX size={23} /> : <FiMenu size={23} />}
+          </button>
         </div>
       </div>
+
+      {/* منوی موبایل */}
+      {mobileMenuOpen && (
+        <div className="border-t border-white/20 bg-[#7DA9D8] px-4 py-5 shadow-lg lg:hidden">
+          <nav className="mx-auto flex max-w-7xl flex-col gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {user && (
+              <>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#344F70]"
+                >
+                  پنل کاربری
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 rounded-xl px-4 py-3 text-right text-sm font-medium text-white transition hover:bg-white/15"
+                >
+                  <FiLogOut size={17} />
+                  خروج از حساب
+                </button>
+              </>
+            )}
+
+            {!user && (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                ورود به حساب
+              </Link>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

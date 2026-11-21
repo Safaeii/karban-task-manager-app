@@ -15,6 +15,8 @@ import TasksPage from "../../features/tasks/pages/TasksPage";
 import CategoriesPage from "../../features/categories/pages/CategoriesPage";
 import TagsPage from "../../features/tags/pages/TagsPage";
 import SettingsPage from "../../features/settings/pages/SettingsPage";
+import AboutPage from "../../features/about/pages/AboutPage";
+
 // ساختار مشترک صفحات محافظت‌شده
 const protectedPage = (element: React.ReactNode) => ({
   element: (
@@ -31,6 +33,7 @@ const protectedPage = (element: React.ReactNode) => ({
 });
 
 const router = createBrowserRouter([
+  // صفحه اصلی
   {
     path: "/",
     element: (
@@ -40,26 +43,49 @@ const router = createBrowserRouter([
       </>
     ),
   },
+
+  // درباره ما
+  {
+    path: "/about",
+    element: (
+      <>
+        <AboutPage />
+        <Footer />
+      </>
+    ),
+  },
+
+  // داشبورد
   {
     path: "/dashboard",
     ...protectedPage(<DashboardPage />),
   },
+
+  // وظایف
   {
     path: "/tasks",
     ...protectedPage(<TasksPage />),
   },
+
+  // دسته‌بندی‌ها
   {
     path: "/categories",
     ...protectedPage(<CategoriesPage />),
   },
+
+  // برچسب‌ها
   {
     path: "/tags",
     ...protectedPage(<TagsPage />),
   },
+
+  // تنظیمات
   {
     path: "/settings",
-    ...protectedPage(<SettingsPage/>),
+    ...protectedPage(<SettingsPage />),
   },
+
+  // ثبت‌نام
   {
     path: "/register",
     element: (
@@ -69,6 +95,8 @@ const router = createBrowserRouter([
       </>
     ),
   },
+
+  // ورود
   {
     path: "/login",
     element: (
