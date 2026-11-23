@@ -125,8 +125,3 @@ npm run deploy
 Frontend Developer
 
 - GitHub: [@Safaeii](https://github.com/Safaeii)
-
----
-
-⭐ If you find this project useful, feel free to give it a star!
-
