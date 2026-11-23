@@ -1,3 +1,4 @@
+
 # Karban – Task Management App
 
 A modern and responsive task management application built with React, TypeScript, and Supabase.
@@ -10,47 +11,50 @@ Karban helps users organize their daily tasks, manage categories and tags, track
 
 ## 📸 Screenshots
 
-### Landing Page
-![Karban Landing Page](public/images/dashboard.png)
+### Dashboard
+![Dashboard](public/images/dashboard.png)
 
-### Task Management
-![Task Management](public/images/tasks.png)
+### Tasks
+![Tasks](public/images/tasks.png)
 
-### Statistics & Reports
+### Statistics
 ![Statistics](public/images/statistics.png)
 
 ## ✨ Features
 
-- **User Authentication:** Sign up and sign in functionality.
-- **Dashboard:** Overview of tasks and daily progress.
-- **Task Management:** Create and manage tasks.
-- **Categories:** Organize tasks into different categories.
-- **Tags:** Label and organize tasks.
-- **Statistics & Reports:** Track task progress and productivity.
-- **Settings:** Manage application preferences.
-- **Responsive Design:** Optimized for desktop, tablet, and mobile devices.
-- **Modern UI:** Clean interface with smooth animations.
+- User authentication and registration
+- Create, edit, and delete tasks
+- Organize tasks by categories
+- Manage tags for better organization
+- Set task priorities
+- Track task status and progress
+- Dashboard with task statistics
+- Responsive design for desktop, tablet, and mobile
+- Persian language and RTL layout
+- Data management with Supabase
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| React | UI development |
-| TypeScript | Type safety |
-| Vite | Development and build tool |
-| Tailwind CSS | Styling |
-| React Router | Routing |
-| Supabase | Backend and authentication |
-| Framer Motion | Animations |
-| Recharts | Data visualization |
-| dnd-kit | Drag and drop interactions |
-| React Icons | Icons |
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Supabase
+- Framer Motion
+- dnd-kit
+- Recharts
+- React Icons
 
 ## 📁 Project Structure
 
 ```text
 src/
+├── app/
+│   └── router/
 ├── components/
+│   ├── common/
+│   └── ui/
 ├── features/
 │   ├── auth/
 │   ├── dashboard/
@@ -61,42 +65,47 @@ src/
 │   ├── about/
 │   └── landing/
 ├── layouts/
-├── routes/
-└── main.tsx
-
-public/
-└── images/
+├── hooks/
+├── lib/
+└── types/
 ```
 
-## ⚙️ Installation & Setup
+## ⚙️ Getting Started
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Safaeii/karban-task-manager-app.git
 ```
 
-Navigate to the project directory:
+### 2. Navigate to the project directory
 
 ```bash
 cd karban-task-manager-app
 ```
 
-Install dependencies:
+### 3. Install dependencies
 
 ```bash
 npm install
 ```
 
-Configure your Supabase environment variables in a `.env` file according to the application's Supabase configuration.
+### 4. Configure environment variables
 
-Start the development server:
+Create a `.env` file in the root directory and add your Supabase credentials:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 5. Run the development server
 
 ```bash
 npm run dev
 ```
 
-## 📦 Build
+## 🏗️ Build
 
 To create a production build:
 
@@ -104,15 +113,11 @@ To create a production build:
 npm run build
 ```
 
-To preview the production build locally:
+## 🌐 Deployment
 
-```bash
-npm run preview
-```
+This project is deployed using GitHub Pages.
 
-## 🚀 Deployment
-
-Karban is deployed using GitHub Pages.
+To deploy the latest version:
 
 ```bash
 npm run deploy
@@ -125,3 +130,7 @@ npm run deploy
 Frontend Developer
 
 - GitHub: [@Safaeii](https://github.com/Safaeii)
+
+---
+
+⭐ If you find this project useful, feel free to give it a star!
