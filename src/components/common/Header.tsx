@@ -12,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../features/auth/hooks/useAuthContext";
 import { signOut } from "../../features/auth/api/authApi";
 
+
 interface HeaderProps {
   onMenuClick?: () => void;
 }
@@ -21,6 +22,9 @@ function Header({ onMenuClick }: HeaderProps) {
   const { user, profile } = useAuthContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const [featuresMenuOpen, setFeaturesMenuOpen] = useState(false);
+
+  
   async function handleLogout() {
     const { error } = await signOut();
 
@@ -38,6 +42,31 @@ function Header({ onMenuClick }: HeaderProps) {
     { label: "امکانات", to: "/#features" },
     { label: "درباره ما", to: "/about" },
   ];
+
+
+  const features = [
+  {
+    label: "مدیریت زمان",
+    to: "/features/time-management",
+  },
+  {
+    label: "افزایش بهره‌وری",
+    to: "/features/productivity",
+  },
+  {
+    label: "پیگیری پیشرفت",
+    to: "/features/progress",
+  },
+  {
+    label: "نظم شخصی",
+    to: "/features/personal-organization",
+  },
+  {
+    label: "مدیریت تیمی",
+    to: "/features/team-management",
+    comingSoon: true,
+  },
+];
 
   const navLinkClass =
     "relative py-2 text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white";
@@ -75,21 +104,64 @@ function Header({ onMenuClick }: HeaderProps) {
           </Link>
         </div>
 
-        {/* منوی دسکتاپ */}
-        <nav className="hidden items-center gap-8 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`${navLinkClass} group`}
-            >
-              {link.label}
+{/* منوی دسکتاپ */}
+<nav className="hidden items-center gap-8 lg:flex">
+  {navLinks.map((link) => (
+    link.label === "امکانات" ? (
+      <div key={link.to} className="relative">
+        <button
+          type="button"
+          onClick={() => setFeaturesMenuOpen((prev) => !prev)}
+          className={`${navLinkClass} group inline-flex items-center gap-2`}
+          aria-expanded={featuresMenuOpen}
+        >
+          امکانات
+          <span
+            className={`text-xs transition-transform duration-200 ${
+              featuresMenuOpen ? "rotate-180" : ""
+            }`}
+          >
+            ▼
+          </span>
+        </button>
 
-              <span className="absolute bottom-0 right-0 h-0.5 w-0 rounded-full bg-white transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
-        </nav>
+        {featuresMenuOpen && (
+          <div className="absolute right-0 top-full z-50 mt-3 w-64 overflow-hidden rounded-2xl border border-[#E8EEF5] bg-white p-2 shadow-xl shadow-[#26364A]/10">
 
+            {features.map((feature) => (
+              <Link
+                key={feature.to}
+                to={feature.to}
+                onClick={() => setFeaturesMenuOpen(false)}
+                className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-[#26364A] transition-colors duration-200 hover:bg-[#DCEBFA] hover:text-[#527FAF]"
+              >
+                {feature.label}
+
+                {feature.comingSoon && (
+                  <span className="rounded-full bg-[#DCEBFA] px-2 py-1 text-[10px] font-medium text-[#527FAF]">
+                    به‌زودی
+                  </span>
+                )}
+              </Link>
+            ))}
+
+          </div>
+        )}
+      </div>
+    ) : (
+      <Link
+        key={link.to}
+        to={link.to}
+        className={`${navLinkClass} group`}
+      >
+        {link.label}
+        <span className="absolute bottom-0 right-0 h-0.5 w-0 rounded-full bg-white transition-all duration-300 group-hover:w-full" />
+      </Link>
+    )
+  ))}
+</nav>
+
+    
         {/* حساب کاربری */}
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {user ? (

@@ -1,5 +1,5 @@
 
-import Header from "../../../components/common/Header";
+
 import HeroDashboard from "../../landing/HeroDashboard";
 import Features from "../components/Features";
 import Aurora from "../components/Aurora";
@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 function LandingPage() {
   return (
     <>
-      <Header />
+
 
       <main
         dir="rtl"

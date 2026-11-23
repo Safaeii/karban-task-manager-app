@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import Footer from "../../components/Footer";
+import Header from "../../components/common/Header";
 
 import DashboardPage from "../../features/dashboard/pages/DashboardPage";
 
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <>
+        <Header />
         <LandingPage />
         <Footer />
       </>
@@ -49,6 +51,7 @@ const router = createBrowserRouter([
     path: "/about",
     element: (
       <>
+        <Header />
         <AboutPage />
         <Footer />
       </>
@@ -90,6 +93,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: (
       <>
+        <Header />
         <RegisterPage />
         <Footer />
       </>
@@ -101,6 +105,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: (
       <>
+        <Header />
         <LoginPage />
         <Footer />
       </>
