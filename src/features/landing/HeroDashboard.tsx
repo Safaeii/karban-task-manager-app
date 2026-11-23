@@ -16,15 +16,15 @@ const tasks = [
 
 const dashboardImages = [
   {
-    image: "/images/dashboard.png",
+    image: `${import.meta.env.BASE_URL}images/dashboard.png`,
     title: "داشبورد کاربان",
   },
   {
-    image: "/images/tasks.png",
+    image: `${import.meta.env.BASE_URL}images/tasks.png`,
     title: "مدیریت وظایف",
   },
   {
-    image: "/images/statistics.png",
+    image: `${import.meta.env.BASE_URL}images/statistics.png`,
     title: "آمار و گزارش‌ها",
   },
 ];

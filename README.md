@@ -1,75 +1,132 @@
-# React + TypeScript + Vite
+# Karban – Task Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and responsive task management application built with React, TypeScript, and Supabase.
 
-Currently, two official plugins are available:
+Karban helps users organize their daily tasks, manage categories and tags, track progress, and stay focused on their goals through a clean and user-friendly interface.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Live Demo
 
-## React Compiler
+[View Karban](https://safaeii.github.io/karban-task-manager-app/)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📸 Screenshots
 
-## Expanding the ESLint configuration
+### Landing Page
+![Karban Landing Page](public/images/dashboard.png)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Task Management
+![Task Management](public/images/tasks.png)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Statistics & Reports
+![Statistics](public/images/statistics.png)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ✨ Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **User Authentication:** Sign up and sign in functionality.
+- **Dashboard:** Overview of tasks and daily progress.
+- **Task Management:** Create and manage tasks.
+- **Categories:** Organize tasks into different categories.
+- **Tags:** Label and organize tasks.
+- **Statistics & Reports:** Track task progress and productivity.
+- **Settings:** Manage application preferences.
+- **Responsive Design:** Optimized for desktop, tablet, and mobile devices.
+- **Modern UI:** Clean interface with smooth animations.
 
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| React | UI development |
+| TypeScript | Type safety |
+| Vite | Development and build tool |
+| Tailwind CSS | Styling |
+| React Router | Routing |
+| Supabase | Backend and authentication |
+| Framer Motion | Animations |
+| Recharts | Data visualization |
+| dnd-kit | Drag and drop interactions |
+| React Icons | Icons |
+
+## 📁 Project Structure
+
+```text
+src/
+├── components/
+├── features/
+│   ├── auth/
+│   ├── dashboard/
+│   ├── tasks/
+│   ├── categories/
+│   ├── tags/
+│   ├── settings/
+│   ├── about/
+│   └── landing/
+├── layouts/
+├── routes/
+└── main.tsx
+
+public/
+└── images/
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚙️ Installation & Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Clone the repository:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+git clone https://github.com/Safaeii/karban-task-manager-app.git
 ```
+
+Navigate to the project directory:
+
+```bash
+cd karban-task-manager-app
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Configure your Supabase environment variables in a `.env` file according to the application's Supabase configuration.
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## 📦 Build
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## 🚀 Deployment
+
+Karban is deployed using GitHub Pages.
+
+```bash
+npm run deploy
+```
+
+## 👩‍💻 Author
+
+**Elahe Safaeii**
+
+Frontend Developer
+
+- GitHub: [@Safaeii](https://github.com/Safaeii)
+
+---
+
+⭐ If you find this project useful, feel free to give it a star!
+

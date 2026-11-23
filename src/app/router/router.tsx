@@ -33,84 +33,89 @@ const protectedPage = (element: React.ReactNode) => ({
   ],
 });
 
-const router = createBrowserRouter([
-  // صفحه اصلی
-  {
-    path: "/",
-    element: (
-      <>
-        <Header />
-        <LandingPage />
-        <Footer />
-      </>
-    ),
-  },
+const router = createBrowserRouter(
+  [
+    // صفحه اصلی
+    {
+      path: "/",
+      element: (
+        <>
+          <Header />
+          <LandingPage />
+          <Footer />
+        </>
+      ),
+    },
 
-  // درباره ما
-  {
-    path: "/about",
-    element: (
-      <>
-        <Header />
-        <AboutPage />
-        <Footer />
-      </>
-    ),
-  },
+    // درباره ما
+    {
+      path: "/about",
+      element: (
+        <>
+          <Header />
+          <AboutPage />
+          <Footer />
+        </>
+      ),
+    },
 
-  // داشبورد
-  {
-    path: "/dashboard",
-    ...protectedPage(<DashboardPage />),
-  },
+    // داشبورد
+    {
+      path: "/dashboard",
+      ...protectedPage(<DashboardPage />),
+    },
 
-  // وظایف
-  {
-    path: "/tasks",
-    ...protectedPage(<TasksPage />),
-  },
+    // وظایف
+    {
+      path: "/tasks",
+      ...protectedPage(<TasksPage />),
+    },
 
-  // دسته‌بندی‌ها
-  {
-    path: "/categories",
-    ...protectedPage(<CategoriesPage />),
-  },
+    // دسته‌بندی‌ها
+    {
+      path: "/categories",
+      ...protectedPage(<CategoriesPage />),
+    },
 
-  // برچسب‌ها
-  {
-    path: "/tags",
-    ...protectedPage(<TagsPage />),
-  },
+    // برچسب‌ها
+    {
+      path: "/tags",
+      ...protectedPage(<TagsPage />),
+    },
 
-  // تنظیمات
-  {
-    path: "/settings",
-    ...protectedPage(<SettingsPage />),
-  },
+    // تنظیمات
+    {
+      path: "/settings",
+      ...protectedPage(<SettingsPage />),
+    },
 
-  // ثبت‌نام
-  {
-    path: "/register",
-    element: (
-      <>
-        <Header />
-        <RegisterPage />
-        <Footer />
-      </>
-    ),
-  },
+    // ثبت‌نام
+    {
+      path: "/register",
+      element: (
+        <>
+          <Header />
+          <RegisterPage />
+          <Footer />
+        </>
+      ),
+    },
 
-  // ورود
+    // ورود
+    {
+      path: "/login",
+      element: (
+        <>
+          <Header />
+          <LoginPage />
+          <Footer />
+        </>
+      ),
+    },
+  ],
   {
-    path: "/login",
-    element: (
-      <>
-        <Header />
-        <LoginPage />
-        <Footer />
-      </>
-    ),
-  },
-]);
+    basename: "/karban-task-manager-app",
+  }
+);
 
 export default router;
