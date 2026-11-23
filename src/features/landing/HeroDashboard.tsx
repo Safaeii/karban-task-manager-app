@@ -3,8 +3,6 @@ import {
   FiBell,
   FiCheckCircle,
   FiClock,
-  FiList,
-  FiArrowUpLeft,
   FiCalendar,
 } from "react-icons/fi";
 
@@ -14,6 +12,21 @@ const tasks = [
   { title: "تکمیل طراحی صفحه اصلی", time: "۰۹:۳۰", done: true },
   { title: "بررسی وظایف روزانه", time: "۱۱:۰۰", done: true },
   { title: "مطالعه و یادگیری React", time: "۱۳:۰۰", done: false },
+];
+
+const dashboardImages = [
+  {
+    image: "/images/dashboard.png",
+    title: "داشبورد کاربان",
+  },
+  {
+    image: "/images/tasks.png",
+    title: "مدیریت وظایف",
+  },
+  {
+    image: "/images/statistics.png",
+    title: "آمار و گزارش‌ها",
+  },
 ];
 
 function HeroDashboard() {
@@ -57,69 +70,32 @@ function HeroDashboard() {
           </button>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Images */}
         <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="rounded-2xl border border-white bg-white/85 p-4 shadow-sm sm:p-5"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="rounded-xl bg-blue-50 p-2 text-[#7DA9D8]">
-                <FiList size={21} />
-              </span>
-              <FiArrowUpLeft className="text-[#A7C3E2]" size={18} />
-            </div>
+          {dashboardImages.map((item, index) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.2 }}
+              className="overflow-hidden rounded-2xl border border-white bg-white/85 p-2 shadow-sm sm:p-3"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                className="aspect-[4/3] w-full rounded-xl object-cover object-top"
+              />
 
-            <p className="text-xs text-[#8493A5] sm:text-sm">کل وظایف</p>
-            <h3 className="mt-2 text-2xl font-black text-[#26364A]">۱۲</h3>
-          </motion.div>
-
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{
-              duration: 4.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.4,
-            }}
-            className="rounded-2xl border border-white bg-white/85 p-4 shadow-sm sm:p-5"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="rounded-xl bg-green-50 p-2 text-green-500">
-                <FiCheckCircle size={21} />
-              </span>
-              <FiArrowUpLeft className="text-green-300" size={18} />
-            </div>
-
-            <p className="text-xs text-[#8493A5] sm:text-sm">انجام شده</p>
-            <h3 className="mt-2 text-2xl font-black text-[#26364A]">۸</h3>
-          </motion.div>
-
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{
-              duration: 4.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.8,
-            }}
-            className="rounded-2xl border border-white bg-white/85 p-4 shadow-sm sm:p-5"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="rounded-xl bg-amber-50 p-2 text-amber-500">
-                <FiClock size={21} />
-              </span>
-              <FiArrowUpLeft className="text-amber-300" size={18} />
-            </div>
-
-            <p className="text-xs text-[#8493A5] sm:text-sm">در حال انجام</p>
-            <h3 className="mt-2 text-2xl font-black text-[#26364A]">۴</h3>
-          </motion.div>
+              <p className="mt-3 text-center text-xs font-bold text-[#52657B] sm:text-sm">
+                {item.title}
+              </p>
+            </motion.div>
+          ))}
         </div>
 
         {/* Bottom Dashboard Content */}
         <div className="relative mt-5 grid grid-cols-1 gap-4 md:grid-cols-5">
+
           {/* Task List */}
           <div className="rounded-2xl border border-white bg-white/80 p-4 md:col-span-3 sm:p-5">
             <div className="mb-5 flex items-center justify-between">

@@ -97,7 +97,7 @@ function Header({ onMenuClick }: HeaderProps) {
             onClick={() => setMobileMenuOpen(false)}
           >
             <img
-              src="/karban-logo.png.png"
+              src="/images/karban-logo.png"
               alt="لوگوی کاربان"
               className="h-12 w-auto max-w-[145px] object-contain sm:h-14 sm:max-w-[175px]"
             />

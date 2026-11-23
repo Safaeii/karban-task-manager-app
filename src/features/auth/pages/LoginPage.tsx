@@ -1,6 +1,14 @@
 
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  FiMail,
+  FiLock,
+  FiArrowLeft,
+  FiLogIn,
+} from "react-icons/fi";
+
 import { signIn } from "../api/authApi";
 
 function LoginPage() {
@@ -37,81 +45,146 @@ function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-6">
+    <main
+      dir="rtl"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#F3F7FC] px-4 py-12"
+    >
+      {/* Background Gradient */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#EAF3FC] via-[#F8FAFD] to-[#DCEBFA]" />
 
-        <h1 className="text-2xl font-bold text-gray-800 text-center">
-          ورود به کاربان
-        </h1>
+      {/* Background Lights */}
+      <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[#7DA9D8]/25 blur-[100px]" />
 
-        <p className="text-sm text-gray-500 text-center mt-2">
-          برای ورود، اطلاعات حساب خود را وارد کنید.
-        </p>
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#A9C9EA]/35 blur-[100px]" />
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+      {/* Login Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 w-full max-w-md"
+      >
+        <div className="rounded-[28px] border border-white/80 bg-white/80 p-6 shadow-[0_20px_70px_rgba(73,115,165,0.12)] backdrop-blur-xl sm:p-9">
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm mb-2">
-              ایمیل
-            </label>
+          {/* Logo */}
+          <div className="mb-7 flex flex-col items-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#A9C9EA] to-[#6F9FCF] text-2xl text-white shadow-lg shadow-blue-200/60">
+              <FiLogIn size={28} />
+            </div>
 
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="example@email.com"
-              required
-              className="w-full border rounded-lg p-3 outline-none focus:border-blue-500"
-            />
-          </div>
+            <h1 className="text-2xl font-black text-[#26364A]">
+              ورود به کاربان
+            </h1>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm mb-2">
-              رمز عبور
-            </label>
-
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="رمز عبور"
-              required
-              className="w-full border rounded-lg p-3 outline-none focus:border-blue-500"
-            />
-          </div>
-
-          {/* Error */}
-          {errorMessage && (
-            <p className="text-sm text-red-600">
-              {errorMessage}
+            <p className="mt-3 text-center text-sm leading-7 text-[#8493A5]">
+              خوش برگشتی!
+              <br />
+              برای ادامه مسیرت وارد حساب کاربری شو.
             </p>
-          )}
+          </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white rounded-lg p-3 hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "در حال ورود..." : "ورود"}
-          </button>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
 
-        </form>
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-semibold text-[#52657B]"
+              >
+                ایمیل
+              </label>
 
-        <p className="text-center text-sm mt-5 text-gray-600">
-          حساب کاربری نداری؟
+              <div className="relative">
+                <FiMail
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#91AAC5]"
+                  size={19}
+                />
 
-          <Link
-            to="/register"
-            className="text-blue-600 mr-1"
-          >
-            ثبت‌نام
-          </Link>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="example@email.com"
+                  required
+                  className="w-full rounded-xl border border-[#E1EAF4] bg-[#F8FAFD] py-3.5 pr-12 pl-4 text-sm text-[#26364A] outline-none transition placeholder:text-[#A6B3C2] focus:border-[#7DA9D8] focus:bg-white focus:ring-4 focus:ring-[#7DA9D8]/15"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-semibold text-[#52657B]"
+              >
+                رمز عبور
+              </label>
+
+              <div className="relative">
+                <FiLock
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#91AAC5]"
+                  size={19}
+                />
+
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="رمز عبور خود را وارد کنید"
+                  required
+                  className="w-full rounded-xl border border-[#E1EAF4] bg-[#F8FAFD] py-3.5 pr-12 pl-4 text-sm text-[#26364A] outline-none transition placeholder:text-[#A6B3C2] focus:border-[#7DA9D8] focus:bg-white focus:ring-4 focus:ring-[#7DA9D8]/15"
+                />
+              </div>
+            </div>
+
+            {/* Error */}
+            {errorMessage && (
+              <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-red-100 bg-red-50 p-3 text-sm text-red-600"
+              >
+                {errorMessage}
+              </motion.p>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-l from-[#6F9FCF] to-[#7DA9D8] py-3.5 font-bold text-white shadow-lg shadow-blue-200/50 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-200/70 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "در حال ورود..." : "ورود به حساب"}
+
+              {!loading && (
+                <FiArrowLeft className="transition-transform group-hover:-translate-x-1" />
+              )}
+            </button>
+          </form>
+
+          {/* Register Link */}
+          <div className="mt-7 border-t border-[#EDF2F8] pt-6 text-center">
+            <p className="text-sm text-[#8493A5]">
+              هنوز حساب کاربری نداری؟
+
+              <Link
+                to="/register"
+                className="mr-2 font-bold text-[#6F9FCF] transition hover:text-[#426F9F]"
+              >
+                ثبت‌نام رایگان
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-xs text-[#91A3B8]">
+          کاربان؛ همراه تو در مسیر رسیدن به اهدافت 💙
         </p>
-
-      </div>
+      </motion.div>
     </main>
   );
 }
